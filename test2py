@@ -1,0 +1,63 @@
+from PIL import Image, ImageDraw, ImageFont
+import os
+
+# Directory to save the generated images
+output_dir = 'output_images'
+os.makedirs(output_dir, exist_ok=True)
+
+# Path to the template image
+template_path = 'template_image.png'
+
+# List of data for customization
+custom_data = [
+    {'name': 'Alice', 'number': '01', 'logo_path': 'logo1.png'},
+    {'name': 'Bob', 'number': '02', 'logo_path': 'logo2.png'},
+    # Add more entries as needed
+]
+
+# Font settings
+font_path = 'arial.ttf'  # Path to your font file
+font_size = 40
+font = ImageFont.truetype(font_path, font_size)
+
+for data in custom_data:
+    # Open the template image
+    image = Image.open(template_path).convert('RGBA')
+
+    # Replace gray background with white
+    white_background = Image.new('RGBA', image.size, (255, 255, 255, 255))
+    image = Image.alpha_composite(white_background, image)
+
+    # Open the logo and convert it to an RGBA format to handle transparency
+    logo = Image.open(data['logo_path']).convert('RGBA')
+    logo = logo.resize((720, 720))  # Resize as needed
+
+    # Remove the background (assume background is near-white or any unwanted color)
+    logo_data = logo.getdata()
+    new_logo_data = []
+    for item in logo_data:
+        r, g, b, a = item
+        # If the color is close to white (background), make it fully transparent
+        if r > 240 and g > 240 and b > 240:
+            new_logo_data.append((255, 255, 255, 0))  # Transparent pixel
+        else:
+            # Make the logo translucent by reducing the alpha channel
+            new_logo_data.append((r, g, b, int(a * 0.5)))  # Adjust 0.5 for desired translucency
+
+    logo.putdata(new_logo_data)
+
+    # Paste the logo onto the template
+    image.paste(logo, (200, 400), logo)  # Coordinates (50, 50) can be adjusted
+
+    # Create a drawing context
+    draw = ImageDraw.Draw(image)
+
+    # Add name and number
+    draw.text((200, 200), data['name'], font=font, fill='black')  # Adjust coordinates
+    draw.text((200, 250), data['number'], font=font, fill='black')
+
+    # Save the customized image
+    output_path = os.path.join(output_dir, f"{data['name']}_creative.png")
+    image.save(output_path)
+
+print(f"Generated {len(custom_data)} customized images in '{output_dir}'.")
