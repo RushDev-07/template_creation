@@ -111,7 +111,7 @@ The API returns the customized image as a PNG file directly in the response. The
 
 ## Code Explanation
 
-### Main Steps in `app.py`
+### Main Steps in `test2.py`
 
 1. **Route Definition**: The `/edit-image` endpoint accepts POST requests with a JSON payload.
 2. **Image Processing**:
