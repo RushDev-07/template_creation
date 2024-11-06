@@ -2,6 +2,7 @@ from flask import Flask, request, send_file, jsonify
 from PIL import Image, ImageDraw, ImageFont
 import io
 import os
+import requests
 
 app = Flask(__name__)
 
@@ -18,7 +19,11 @@ def edit_image():
 
         # Load the logo image
         logo_img_path = data['logoImg']
-        logo_img = Image.open(logo_img_path).convert('RGBA')
+        if logo_img_path.startswith('http'):  # Check if the logo path is a URL
+            response = requests.get(logo_img_path)
+            logo_img = Image.open(io.BytesIO(response.content)).convert('RGBA')
+        else:  # Assume it's a local file path
+            logo_img = Image.open(logo_img_path).convert('RGBA')
         
         # Resize the logo
         logo_size = data['logoSize']
