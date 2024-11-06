@@ -43,7 +43,7 @@ project_root/
 2. Start the Flask API:
 
 ```bash
-python app.py
+python test2.py
 ```
 
 This will start the Flask server at `http://localhost:5000`.
