@@ -69,7 +69,7 @@ def edit_image():
         output.seek(0)
 
         # Return the image as response
-        return send_file(output, mimetype='image/png')
+        return send_file(output, mimetype='image/png', as_attachment=True, download_name="customized_image.png")
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
